@@ -261,5 +261,69 @@ export const scanApi = {
     }
 
     return data
+  },
+
+  /**
+   * Start a ZAP Baseline scan.
+   * @param {string} targetUrl
+   * @returns {Promise<object>} Response JSON with scan data
+   */
+  async startZapScan(targetUrl) {
+    let response
+    try {
+      response = await fetch(`${appConfig.apiBaseUrl}/api/zap-scan/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetUrl })
+      })
+    } catch (networkErr) {
+      throw createNetworkError(networkErr)
+    }
+
+    let data
+    try {
+      data = await response.json()
+    } catch {
+      throw new Error('Respons server tidak valid (bukan JSON).')
+    }
+
+    if (!response.ok || !data.success) {
+      const errMsg = data.error?.message || data.message || 'Gagal memulai pemindaian ZAP.'
+      const err = new Error(errMsg)
+      err.code = data.error?.code || data.code
+      throw err
+    }
+
+    return data
+  },
+
+  /**
+   * Get a ZAP scan status.
+   * @param {string} scanId
+   * @returns {Promise<object>} Response JSON with scan data
+   */
+  async getZapScan(scanId) {
+    let response
+    try {
+      response = await fetch(`${appConfig.apiBaseUrl}/api/zap-scan/status/${scanId}`)
+    } catch (networkErr) {
+      throw createNetworkError(networkErr)
+    }
+
+    let data
+    try {
+      data = await response.json()
+    } catch {
+      throw new Error('Respons server tidak valid (bukan JSON).')
+    }
+
+    if (!response.ok || !data.success) {
+      const errMsg = data.error?.message || data.message || 'Gagal mengambil status pemindaian ZAP.'
+      const err = new Error(errMsg)
+      err.code = data.error?.code || data.code
+      throw err
+    }
+
+    return data
   }
 }

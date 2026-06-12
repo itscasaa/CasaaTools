@@ -14,6 +14,7 @@ import cloneRoutes from './routes/clone.routes.js'
 import jobRoutes from './routes/job.routes.js'
 import previewRoutes from './routes/preview.routes.js'
 import scanRoutes from './routes/scan.routes.js'
+import zapScanRoutes from './routes/zapScan.routes.js'
 import { markInterruptedJobs, markStaleJobs } from './services/scan.service.js'
 import { startCleanupScheduler } from './services/scan-cleanup.service.js'
 
@@ -59,6 +60,7 @@ app.use('/api/clone', cloneRoutes)
 app.use('/api/jobs', jobRoutes)
 app.use('/preview', previewRoutes)
 app.use('/api/scans', scanRoutes)
+app.use('/api/zap-scan', zapScanRoutes)
 
 // Fallback 404 Route Handler
 app.use(notFoundMiddleware)
