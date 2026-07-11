@@ -120,7 +120,7 @@ function makeHeadRequest(url) {
       hostname: parsedUrl.hostname,
       port: parsedUrl.port || (parsedUrl.protocol === 'https:' ? 443 : 80),
       path: parsedUrl.pathname + parsedUrl.search,
-      headers: { 'User-Agent': 'PageMirror-SSRF-Preflight/1.0' },
+      headers: { 'User-Agent': 'CasaaTools-SSRF-Preflight/1.0' },
       timeout: 10000 // 10 second timeout per hop
     }
 

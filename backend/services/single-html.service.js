@@ -217,7 +217,7 @@ function resolveUrl(url, base) {
  * @returns {string} README content
  */
 function generateRemoteAssetsReadme() {
-  return `PageMirror Single HTML Snapshot
+  return `CasaaTools Single HTML Snapshot
 
 This package contains a single rendered HTML file.
 

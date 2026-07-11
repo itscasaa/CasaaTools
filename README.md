@@ -1,6 +1,6 @@
-# PageMirror — Website Snapshot & HTML Rebuilder
+# CasaaTools — Website Snapshot & HTML Rebuilder
 
-PageMirror is a modern web tool for capturing public web pages and rebuilding them as local HTML snapshots. Users enter a URL, the system renders it using browser automation (Playwright), captures the final rendered DOM along with all assets (CSS, JS, images, fonts, media), then rebuilds the page into a downloadable ZIP package.
+CasaaTools is a modern web tool for capturing public web pages and rebuilding them as local HTML snapshots. Users enter a URL, the system renders it using browser automation (Playwright), captures the final rendered DOM along with all assets (CSS, JS, images, fonts, media), then rebuilds the page into a downloadable ZIP package.
 
 ## Stack
 
@@ -35,7 +35,7 @@ PageMirror is a modern web tool for capturing public web pages and rebuilding th
 | Phase 19 | Optional Multi-Page Crawl | 🔮 Planned |
 | Phase 20 | Production Deployment | 🔮 Planned |
 
-## What PageMirror Does Today
+## What CasaaTools Does Today
 
 1. **URL Submission** — Submit any public HTTP/HTTPS URL
 2. **Browser Capture** — Full-page Playwright/Chromium render with JavaScript execution
@@ -55,7 +55,7 @@ PageMirror is a modern web tool for capturing public web pages and rebuilding th
 ## ZIP Output Contents
 
 ```
-pagemirror-<jobId>.zip
+casaatools-<jobId>.zip
 ├── index.html                  # Rebuilt HTML with rewritten local asset paths
 ├── index.original.html         # Original captured DOM (before rewriting)
 ├── screenshot.png              # Full-page original screenshot

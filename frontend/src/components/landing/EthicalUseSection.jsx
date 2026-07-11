@@ -33,7 +33,7 @@ export default function EthicalUseSection() {
             Built for Authorized Snapshots Only
           </h2>
           <p className="mt-4 text-xs text-[#A1A1AA] leading-relaxed max-w-2xl mx-auto">
-            PageMirror is designed for owned websites, public pages with permission, and authorized analysis. It does not support login bypass, paywall bypass, captcha bypass, anti-bot bypass, or private dashboard cloning.
+            CasaaTools is designed for owned websites, public pages with permission, and authorized analysis. It does not support login bypass, paywall bypass, captcha bypass, anti-bot bypass, or private dashboard cloning.
           </p>
         </div>
 

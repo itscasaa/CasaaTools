@@ -1,4 +1,4 @@
-# PageMirror — API Reference
+# CasaaTools — API Reference
 
 > All endpoints are implemented and active. The backend runs on port 5000 by default.
 
@@ -252,7 +252,7 @@ All API responses follow this consistent envelope:
 
 **Response (200):**
 - Content-Type: `application/zip`
-- Content-Disposition: `attachment; filename="pagemirror-<jobId>.zip"`
+- Content-Disposition: `attachment; filename="casaatools-<jobId>.zip"`
 - Body: Binary ZIP stream
 
 **Response (409):** Required files not yet ready (job still running or incomplete)

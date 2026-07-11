@@ -51,7 +51,7 @@ export default function DownloadCard({ job }) {
     // Create actual file download trigger
     const link = document.createElement('a')
     link.href = downloadUrl
-    link.download = `pagemirror-${job.jobId}.zip`
+    link.download = `casaatools-${job.jobId}.zip`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

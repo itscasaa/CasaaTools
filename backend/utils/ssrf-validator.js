@@ -2,7 +2,7 @@ import net from 'net'
 import dns from 'dns'
 
 /**
- * SSRF Validation Utility for PageMirror Security & Performance Scanner.
+ * SSRF Validation Utility for CasaaTools Security & Performance Scanner.
  *
  * Provides URL safety validation including private IP detection,
  * cloud metadata endpoint blocking, localhost detection, and

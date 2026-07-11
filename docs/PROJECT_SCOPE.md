@@ -1,8 +1,8 @@
-# PageMirror — Project Scope
+# CasaaTools — Project Scope
 
-## What is PageMirror?
+## What is CasaaTools?
 
-PageMirror is a **Website Snapshot & HTML Rebuilder**. It renders public or authorized web pages using a real browser engine (Playwright), captures the final rendered DOM and supporting assets, rewrites internal paths, and exports a local HTML snapshot package that can be previewed and downloaded.
+CasaaTools is a **Website Snapshot & HTML Rebuilder**. It renders public or authorized web pages using a real browser engine (Playwright), captures the final rendered DOM and supporting assets, rewrites internal paths, and exports a local HTML snapshot package that can be previewed and downloaded.
 
 ## Main Project Goal
 

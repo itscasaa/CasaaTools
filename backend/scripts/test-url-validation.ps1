@@ -1,4 +1,4 @@
-# PowerShell script to test PageMirror URL Validation and Security rules
+# PowerShell script to test CasaaTools URL Validation and Security rules
 
 $baseUrl = "http://localhost:5000/api/clone"
 

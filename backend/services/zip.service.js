@@ -113,7 +113,7 @@ function generateIncompleteSnapshotReadme(missingFiles, mode = 'offline-package'
     ? 'This is a single HTML snapshot with remote asset references.'
     : 'This is an offline package snapshot with downloaded assets.'
   
-  return `PageMirror Partial Snapshot
+  return `CasaaTools Partial Snapshot
 
 This snapshot package is incomplete.
 ${modeDescription}

@@ -1,7 +1,7 @@
 # Snapshot Modes Feature - Implementation Complete
 
 ## Overview
-Successfully implemented two snapshot modes for PageMirror:
+Successfully implemented two snapshot modes for CasaaTools:
 1. **Offline Package Mode** (existing behavior) - Downloads assets, rewrites HTML/CSS paths
 2. **Single HTML Mode** (new behavior) - Captures rendered DOM, preserves remote asset URLs
 

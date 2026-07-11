@@ -97,7 +97,7 @@ export default function HeroSection() {
                 <span className="w-3 h-3 rounded-full bg-emerald-500/30" />
               </div>
               <span className="text-[10px] font-mono text-[#71717A] bg-black/40 border border-white/5 px-4 py-1.5 rounded-full select-none">
-                dashboard.pagemirror.com/workspace
+                dashboard.casaatools.com/workspace
               </span>
               <span className="w-6" />
             </div>

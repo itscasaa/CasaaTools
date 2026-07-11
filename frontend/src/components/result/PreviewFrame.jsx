@@ -91,7 +91,7 @@ export default function PreviewFrame({ jobId, url }) {
             key={key}
             src={previewUrl}
             onLoad={handleLoad}
-            title="PageMirror Local Snapshot Preview"
+            title="CasaaTools Local Snapshot Preview"
             className="w-full h-full border-none bg-white"
             sandbox="allow-same-origin allow-scripts"
           />

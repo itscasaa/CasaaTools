@@ -442,7 +442,7 @@ export const downloadJobZip = async (req, res, next) => {
     
     // Set headers for ZIP attachment
     res.setHeader('Content-Type', 'application/zip')
-    res.setHeader('Content-Disposition', `attachment; filename="pagemirror-${jobId}.zip"`)
+    res.setHeader('Content-Disposition', `attachment; filename="casaatools-${jobId}.zip"`)
     
     archive.on('end', () => {
       logger.info(`Successfully streamed ZIP archive for job ${jobId} (mode: ${downloadStatus.mode})`)

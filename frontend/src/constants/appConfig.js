@@ -2,10 +2,10 @@
 // In production, set VITE_API_BASE_URL to the full backend URL.
 export const appConfig = {
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '',
-  name: 'PageMirror',
+  name: 'CasaaTools',
   tagline: 'Website Snapshot & HTML Rebuilder',
   version: '0.1.0',
-  githubUrl: 'https://github.com/pagemirror/pagemirror',
+  githubUrl: 'https://github.com/casaatools/casaatools',
   limits: {
     maxRequestsPerMin: 10,
     maxAssetSizeMb: 10,

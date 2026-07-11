@@ -1,4 +1,4 @@
-# PageMirror — Security Notes
+# CasaaTools — Security Notes
 
 > All security protections listed here are implemented and active in the current codebase. They apply in both development and production modes.
 

@@ -39,7 +39,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms', 
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    service: 'PageMirror API',
+    service: 'CasaaTools API',
     status: 'ok',
     phase: 'backend-foundation',
     scanner: {
@@ -70,7 +70,7 @@ app.use(errorMiddleware)
 
 // Start listening
 const server = app.listen(appConfig.PORT, () => {
-  logger.info(`PageMirror Express Server successfully launched in [${appConfig.NODE_ENV}] mode on port ${appConfig.PORT}`)
+  logger.info(`CasaaTools Express Server successfully launched in [${appConfig.NODE_ENV}] mode on port ${appConfig.PORT}`)
   const origins = Array.isArray(appConfig.ALLOWED_ORIGINS) ? appConfig.ALLOWED_ORIGINS.join(', ') : appConfig.ALLOWED_ORIGINS
   logger.info(`Allowed CORS origins: ${origins}`)
   markInterruptedJobs()

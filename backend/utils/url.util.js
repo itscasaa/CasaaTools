@@ -1,5 +1,5 @@
 /**
- * URL utility helper functions for PageMirror.
+ * URL utility helper functions for CasaaTools.
  */
 
 /**

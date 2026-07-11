@@ -169,16 +169,16 @@ export default function HomePage() {
   // FAQs list
   const faqs = [
     {
-      q: 'Does PageMirror clone entire websites?',
+      q: 'Does CasaaTools clone entire websites?',
       a: 'The MVP focuses on single public page snapshots. Multi-page crawling is planned for later phases with strict limits.'
     },
     {
       q: 'Will animations like GSAP work?',
-      a: 'PageMirror detects animation libraries (GSAP, Framer Motion, AOS, Three.js, Lottie, and more) and downloads all referenced scripts. Animations that depend only on local assets may work in the snapshot. Animations requiring external APIs, live data, or server state will not replay.'
+      a: 'CasaaTools detects animation libraries (GSAP, Framer Motion, AOS, Three.js, Lottie, and more) and downloads all referenced scripts. Animations that depend only on local assets may work in the snapshot. Animations requiring external APIs, live data, or server state will not replay.'
     },
     {
       q: 'Can it bypass login or captcha?',
-      a: 'No. PageMirror is not designed to bypass login, captcha, paywalls, anti-bot protection, or private content.'
+      a: 'No. CasaaTools is not designed to bypass login, captcha, paywalls, anti-bot protection, or private content.'
     },
     {
       q: 'What does the exported ZIP contain?',
@@ -225,7 +225,7 @@ export default function HomePage() {
                     Think Less About the Capture.<br />Focus on the Snapshot.
                   </h2>
                   <p className="mt-4 text-xs text-[#A1A1AA] leading-relaxed max-w-xl mx-auto">
-                    PageMirror handles browser rendering, DOM capture, asset mapping, and local export so developers can inspect and archive public pages faster.
+                    CasaaTools handles browser rendering, DOM capture, asset mapping, and local export so developers can inspect and archive public pages faster.
                   </p>
                 </div>
 
@@ -324,7 +324,7 @@ export default function HomePage() {
                         size="lg"
                         className="rounded-full font-bold px-8 shadow-2xl shadow-[#6D5DFB]/15"
                       >
-                        Launch PageMirror
+                        Launch CasaaTools
                         <ArrowUpRight className="ml-2 w-4.5 h-4.5" />
                       </Button>
                     </div>
@@ -405,7 +405,7 @@ export default function HomePage() {
 
                       <div className="pt-4 border-t border-white/[0.04] w-full max-w-sm">
                         <p className="text-[10px] text-gray-500 leading-normal">
-                          PageMirror is processing this snapshot in the background. Results will appear automatically when the job completes.
+                          CasaaTools is processing this snapshot in the background. Results will appear automatically when the job completes.
                         </p>
                       </div>
                     </div>

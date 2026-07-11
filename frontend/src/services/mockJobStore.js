@@ -195,7 +195,7 @@ export function getMockHtmlForJob(jobId, url) {
             Welcome to ${hostname}
         </h1>
         <p class="text-lg text-slate-400 max-w-xl mx-auto mb-10">
-            This is a clean, local snapshot captured by PageMirror. All scripts, fonts, and stylesheets are loaded locally for archival reference.
+            This is a clean, local snapshot captured by CasaaTools. All scripts, fonts, and stylesheets are loaded locally for archival reference.
         </p>
         <div class="flex justify-center gap-4">
             <button class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium">Get Started</button>
@@ -206,7 +206,7 @@ export function getMockHtmlForJob(jobId, url) {
         </div>
     </main>
     <footer class="p-8 border-t border-white/10 text-center text-xs text-slate-500">
-        <p>&copy; 2026 ${hostname}. Captured using PageMirror Rebuilder.</p>
+        <p>&copy; 2026 ${hostname}. Captured using CasaaTools Rebuilder.</p>
     </footer>
     <!-- Rebuilt local scripts -->
     <script src="assets/js/app_fe3b8c.js"></script>
