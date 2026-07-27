@@ -1,7 +1,17 @@
 // In development with Vite proxy, use relative URLs (empty base).
 // In production, set VITE_API_BASE_URL to the full backend URL.
+const getDynamicApiBase = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL
+  }
+  if (typeof window !== 'undefined' && window.location.pathname.startsWith('/casaatools')) {
+    return '/casaatools'
+  }
+  return ''
+}
+
 export const appConfig = {
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '',
+  apiBaseUrl: getDynamicApiBase(),
   name: 'CasaaTools',
   tagline: 'Website Snapshot & HTML Rebuilder',
   version: '0.1.0',

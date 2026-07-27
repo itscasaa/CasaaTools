@@ -7,7 +7,9 @@ export default function ProcessTimeline({ logs = [], currentStep = '' }) {
     { id: 'Starting snapshot', label: 'Starting Snapshot', description: 'Preparing output directory.' },
     { id: 'Launching browser', label: 'Launching Browser', description: 'Starting headless browser instance.' },
     { id: 'Opening page', label: 'Opening Page', description: 'Navigating to target URL.' },
+    { id: 'Cooldown delay', label: 'Cooldown Delay', description: 'Waiting for website assets to render completely.' },
     { id: 'Triggering lazy-loaded content', label: 'Triggering Lazy-Loaded Content', description: 'Scrolling viewport gradually to trigger lazy-loaded sections.' },
+
     { id: 'Capturing rendered DOM', label: 'Capturing Rendered DOM', description: 'Extracting fully rendered HTML DOM.' },
     { id: 'Capturing screenshot', label: 'Capturing Screenshot', description: 'Saving original viewport screenshot.' },
     { id: 'Discovering assets', label: 'Discovering Assets', description: 'Scanning page references.' },

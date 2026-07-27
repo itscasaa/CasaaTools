@@ -1,29 +1,32 @@
 import { logger } from '../utils/logger.util.js'
+import { getJobOutputDir } from '../utils/path.util.js'
+import { fileExists, readTextFile } from '../utils/file.util.js'
+import path from 'path'
 
 // Known frontend libraries and their categories/keywords
 const LIBRARY_DEFS = {
   // Animation
-  gsap: { name: 'GSAP', category: 'animation', keyword: 'gsap' },
-  scrollTrigger: { name: 'ScrollTrigger', category: 'animation', keyword: 'scrolltrigger' },
-  lenis: { name: 'Lenis', category: 'animation', keyword: 'lenis' },
-  locomotiveScroll: { name: 'Locomotive Scroll', category: 'animation', keyword: 'locomotive-scroll' },
-  aos: { name: 'AOS', category: 'animation', keyword: 'aos' },
-  anime: { name: 'Anime.js', category: 'animation', keyword: 'anime' },
-  three: { name: 'Three.js', category: 'animation', keyword: 'three' },
-  lottie: { name: 'Lottie', category: 'animation', keyword: ['lottie', 'bodymovin'] },
-  framerMotion: { name: 'Framer Motion', category: 'animation', keyword: ['framer-motion', 'motion'] },
+  gsap: { name: 'GSAP', category: 'animation', keyword: 'gsap', contentKeywords: ['gsap', 'TweenMax', 'ScrollTrigger'] },
+  scrollTrigger: { name: 'ScrollTrigger', category: 'animation', keyword: 'scrolltrigger', contentKeywords: ['ScrollTrigger'] },
+  lenis: { name: 'Lenis', category: 'animation', keyword: 'lenis', contentKeywords: ['lenis-scrollbar', 'new Lenis', 'window.lenis'] },
+  locomotiveScroll: { name: 'Locomotive Scroll', category: 'animation', keyword: 'locomotive-scroll', contentKeywords: ['LocomotiveScroll'] },
+  aos: { name: 'AOS', category: 'animation', keyword: 'aos', contentKeywords: ['AOS.init', 'data-aos'] },
+  anime: { name: 'Anime.js', category: 'animation', keyword: 'anime', contentKeywords: ['anime.js', 'anime('] },
+  three: { name: 'Three.js', category: 'animation', keyword: 'three', contentKeywords: ['THREE.WebGLRenderer', 'THREE.Scene'] },
+  lottie: { name: 'Lottie', category: 'animation', keyword: ['lottie', 'bodymovin'], contentKeywords: ['lottie.loadAnimation', 'bodymovin.loadAnimation'] },
+  framerMotion: { name: 'Framer Motion', category: 'animation', keyword: ['framer-motion', 'motion'], contentKeywords: ['__FramerMotion__', 'framer-motion', 'useReducedMotion'] },
   
   // Frameworks
-  react: { name: 'React', category: 'frameworks', keyword: 'react' },
-  vue: { name: 'Vue', category: 'frameworks', keyword: 'vue' },
-  angular: { name: 'Angular', category: 'frameworks', keyword: 'angular' },
-  next: { name: 'Next.js', category: 'frameworks', keyword: '_next/static' },
-  nuxt: { name: 'Nuxt', category: 'frameworks', keyword: ['_nuxt', 'nuxt.js'] },
+  react: { name: 'React', category: 'frameworks', keyword: 'react', contentKeywords: ['React.createElement', 'react-dom'] },
+  vue: { name: 'Vue', category: 'frameworks', keyword: 'vue', contentKeywords: ['Vue.createApp', 'vue-router'] },
+  angular: { name: 'Angular', category: 'frameworks', keyword: 'angular', contentKeywords: ['ng-controller', 'ng-app'] },
+  next: { name: 'Next.js', category: 'frameworks', keyword: '_next/static', contentKeywords: ['__NEXT_DATA__', '_next/static'] },
+  nuxt: { name: 'Nuxt', category: 'frameworks', keyword: ['_nuxt', 'nuxt.js'], contentKeywords: ['__NUXT__', '_nuxt/'] },
   
   // UI / interaction
-  swiper: { name: 'Swiper', category: 'ui', keyword: 'swiper' },
-  splide: { name: 'Splide', category: 'ui', keyword: 'splide' },
-  jquery: { name: 'jQuery', category: 'ui', keyword: 'jquery' }
+  swiper: { name: 'Swiper', category: 'ui', keyword: 'swiper', contentKeywords: ['swiper-container', 'new Swiper'] },
+  splide: { name: 'Splide', category: 'ui', keyword: 'splide', contentKeywords: ['splide', 'new Splide'] },
+  jquery: { name: 'jQuery', category: 'ui', keyword: 'jquery', contentKeywords: ['jQuery', 'window.jQuery'] }
 }
 
 /**
@@ -175,6 +178,16 @@ export const detectPageLibraries = async ({ page, html, manifest, networkResourc
     if (html.includes('data-aos=')) addDetection('aos', 'html-marker', 'data-aos attribute found in HTML tags')
     if (html.includes('swiper-')) addDetection('swiper', 'html-marker', 'swiper CSS classes found in HTML')
     if (html.includes('splide')) addDetection('splide', 'html-marker', 'splide CSS classes found in HTML')
+    
+    // Scan raw HTML content for framework/animation keywords in inline scripts or text
+    for (const [key, def] of Object.entries(LIBRARY_DEFS)) {
+      const contentKws = def.contentKeywords || []
+      for (const kw of contentKws) {
+        if (html.includes(kw)) {
+          addDetection(key, 'html-content', `Found keyword "${kw}" inside HTML page content`)
+        }
+      }
+    }
   }
 
   // 5. Scan manifest assets original URLs and local filenames if available
@@ -195,6 +208,31 @@ export const detectPageLibraries = async ({ page, html, manifest, networkResourc
           }
         }
       }
+    }
+  }
+
+  // 6. Scan local asset files contents if available (for downloaded scripts in offline mode)
+  if (manifest && manifest.assets && manifest.jobId) {
+    try {
+      const outputDir = getJobOutputDir(manifest.jobId)
+      for (const asset of manifest.assets) {
+        if (asset.status === 'downloaded' && asset.type === 'script' && asset.localPath) {
+          const filePath = path.join(outputDir, asset.localPath)
+          if (await fileExists(filePath)) {
+            const content = await readTextFile(filePath)
+            for (const [key, def] of Object.entries(LIBRARY_DEFS)) {
+              const contentKws = def.contentKeywords || []
+              for (const kw of contentKws) {
+                if (content.includes(kw)) {
+                  addDetection(key, 'file-content', `Found keyword "${kw}" inside local file "${asset.fileName || asset.localPath}"`)
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (err) {
+      logger.warn(`Failed to scan downloaded script contents: ${err.message}`)
     }
   }
 

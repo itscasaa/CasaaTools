@@ -7,21 +7,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#05050A', // main dark background
-        accentBg: '#080816',
-        cardBg: 'rgba(255, 255, 255, 0.04)',
-        cardBorder: 'rgba(255, 255, 255, 0.08)',
-        glowBorder: 'rgba(139, 92, 246, 0.35)',
+        background: '#090a0f', // main dark background
+        accentBg: '#0f111a',
+        cardBg: 'rgba(255, 255, 255, 0.03)',
+        cardBorder: 'rgba(255, 255, 255, 0.05)',
+        glowBorder: 'rgba(37, 99, 235, 0.3)',
         primary: {
-          DEFAULT: '#6D5DFB', // Primary purple
+          DEFAULT: '#6D5DFB', // Primary vibrant purple
           hover: '#5B4CE2',
         },
         violet: {
-          DEFAULT: '#8B5CF6', // Electric violet
+          DEFAULT: '#8B5CF6', // Purple fuchsia
           hover: '#7C3AED',
         },
-        blueGlow: '#3B82F6', // Blue glow
-        cyanAccent: '#38BDF8', // Soft cyan accent
+        blueGlow: '#6D5DFB', // Purple glow
+        cyanAccent: '#a78bfa', // Muted violet accent
         textPrimary: '#F8FAFC',
         textSecondary: '#A1A1AA',
         textMuted: '#71717A',

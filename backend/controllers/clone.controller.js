@@ -14,7 +14,7 @@ const DEFAULT_MODE = 'offline-package'
 export const submitClone = async (req, res, next) => {
   try {
     const safeUrl = req.safeUrl
-    const { mode = DEFAULT_MODE } = req.body
+    const { mode = DEFAULT_MODE, options = {} } = req.body
     
     // Validate snapshot mode
     if (!VALID_MODES.includes(mode)) {
@@ -46,11 +46,11 @@ export const submitClone = async (req, res, next) => {
     const jobId = generateJobId()
     
     // Initialize job status model immediately
-    const job = await createJob({ jobId, url: safeUrl, mode })
+    const job = await createJob({ jobId, url: safeUrl, mode, userId: req.user?.email, options })
     
     // Execute Playwright browser capture and rebuilder pipeline asynchronously
     setImmediate(() => {
-      runSnapshotJob({ jobId, url: safeUrl, mode })
+      runSnapshotJob({ jobId, url: safeUrl, mode, options })
     })
     
     res.status(202).json({

@@ -94,13 +94,13 @@ export default function ShowcaseSection() {
           </p>
           <div className="mt-6 flex justify-center gap-4">
             {!isPlaying && !isDemoFinished && (
-              <Button onClick={startDemo} className="shadow-2xl shadow-[#6D5DFB]/15 rounded-full px-6 py-2.5 text-xs font-semibold uppercase tracking-wider">
+              <Button onClick={startDemo} className="shadow-xl shadow-[#6D5DFB]/15 bg-gradient-to-r from-[#6D5DFB] to-[#8B5CF6] hover:from-[#5B4CE2] hover:to-[#7C3AED] rounded-xl px-6 py-2.5 text-xs font-semibold uppercase tracking-wider">
                 <Play className="w-4 h-4 mr-2 fill-current" />
                 Run Simulation Demo
               </Button>
             )}
             {(isPlaying || isDemoFinished) && (
-              <Button onClick={resetDemo} variant="secondary" className="rounded-full px-6 py-2.5 text-xs font-semibold uppercase tracking-wider">
+              <Button onClick={resetDemo} variant="secondary" className="rounded-xl border border-white/5 bg-white/[0.04] hover:bg-white/[0.08] hover:border-white/[0.15] px-6 py-2.5 text-xs font-semibold uppercase tracking-wider">
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Reset Sandbox
               </Button>

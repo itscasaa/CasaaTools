@@ -6,8 +6,8 @@ export const Card = ({ className = '', glass = true, children, ...props }) => {
       className={`${
         glass 
           ? 'glass-card' 
-          : 'bg-[#0A0A16] border border-[#14142B]'
-      } rounded-3xl overflow-hidden shadow-2xl ${className}`}
+          : 'bg-accentBg border border-white/5'
+      } rounded-xl overflow-hidden shadow-2xl ${className}`}
       {...props}
     >
       {children}

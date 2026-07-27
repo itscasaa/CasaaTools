@@ -1,15 +1,40 @@
 import path from 'path'
+import * as cheerio from 'cheerio'
 import { getJobOutputDir } from '../utils/path.util.js'
 import { ensureDirectoryExists, writeTextFile, writeJsonFile, writeBufferFile } from '../utils/file.util.js'
 import { capturePage } from './browser.service.js'
 import { discoverAssets } from './asset-discovery.service.js'
 import { downloadAssetsForJob } from './asset-downloader.service.js'
-import { rewriteHtmlForJob } from './rewrite-html.service.js'
+import { rewriteHtmlForJob, urlToFilename } from './rewrite-html.service.js'
 import { rewriteCssForJob } from './rewrite-css.service.js'
 import { detectPageLibraries } from './animation-detector.service.js'
 import { runVisualCompareForJob } from './visual-compare.service.js'
+import { refineHtmlWithAI } from './prompt-generator.service.js'
 import { limitsConfig } from '../config/limits.config.js'
 import { logger } from '../utils/logger.util.js'
+
+const getInternalLinks = (html, baseUrl) => {
+  const $ = cheerio.load(html)
+  const links = []
+  try {
+    const origin = new URL(baseUrl).origin
+    $('a[href]').each((_, el) => {
+      const href = $(el).attr('href')
+      if (href) {
+        try {
+          const resolved = new URL(href, baseUrl)
+          if (resolved.origin === origin && !resolved.hash && !resolved.pathname.startsWith('javascript:')) {
+            const cleanUrl = resolved.origin + resolved.pathname
+            if (!links.includes(cleanUrl)) {
+              links.push(cleanUrl)
+            }
+          }
+        } catch (e) {}
+      }
+    })
+  } catch (e) {}
+  return links
+}
 
 /**
  * Creates a website snapshot: runs browser capture, scans assets,
@@ -21,7 +46,7 @@ import { logger } from '../utils/logger.util.js'
  * @param {string} params.jobId - The unique Job ID
  * @returns {Promise<object>} The snapshot metadata
  */
-export const createSnapshot = async ({ url, jobId, onProgress }) => {
+export const createSnapshot = async ({ url, jobId, options = {}, onProgress }) => {
   const createdAt = new Date().toISOString()
   const startTime = Date.now()
   
@@ -37,14 +62,71 @@ export const createSnapshot = async ({ url, jobId, onProgress }) => {
     // Perform browser capture
     if (onProgress) await onProgress(10, 'Launching browser', 'Headless browser launched safely.')
     if (onProgress) await onProgress(15, 'Opening page', 'Navigating to target URL and waiting for network idle.')
-    const { title, html, screenshotBuffer, captureInfo, networkResources, runtimeIntelligence, autoScroll } = await capturePage(url, { onProgress })
+    
+    const basePage = await capturePage(url, {
+      onProgress,
+      enableAutoScroll: options.scrollPage,
+      autoScrollStepPx: options.autoScrollStepPx,
+      autoScrollDelayMs: options.autoScrollDelayMs,
+      rebuildCooldownMs: options.rebuildCooldownMs
+    })
+
+    const pages = [{ url, ...basePage }]
+    const crawledUrlsMap = new Map()
+    crawledUrlsMap.set(url, urlToFilename(url, url))
+
+    if (options.crawlPages === true) {
+      const visited = new Set([url])
+      const queue = getInternalLinks(basePage.html, url)
+      const maxPages = options.maxPages || limitsConfig.MAX_CRAWLED_PAGES || 6
+      
+      while (queue.length > 0 && pages.length < maxPages) {
+        const nextUrl = queue.shift()
+        if (visited.has(nextUrl)) continue
+        visited.add(nextUrl)
+        
+        try {
+          logger.info(`Crawling internal page: ${nextUrl} (${pages.length + 1}/${maxPages})`)
+          if (onProgress) {
+            await onProgress(
+              15 + Math.floor((pages.length / maxPages) * 12),
+              'Crawling pages',
+              `Navigating to internal link: ${new URL(nextUrl).pathname}`
+            )
+          }
+          const pageResult = await capturePage(nextUrl, {
+            enableAutoScroll: options.scrollPage,
+            autoScrollStepPx: options.autoScrollStepPx,
+            autoScrollDelayMs: options.autoScrollDelayMs,
+            rebuildCooldownMs: options.rebuildCooldownMs
+          })
+          pages.push({ url: nextUrl, ...pageResult })
+          crawledUrlsMap.set(nextUrl, urlToFilename(nextUrl, url))
+          
+          const newLinks = getInternalLinks(pageResult.html, nextUrl)
+          for (const link of newLinks) {
+            if (!visited.has(link) && !queue.includes(link)) {
+              queue.push(link)
+            }
+          }
+        } catch (err) {
+          logger.error(`Failed to crawl page ${nextUrl}: ${err.message}`)
+        }
+      }
+    }
+
+    const { title, html, screenshotBuffer, captureInfo, networkResources, runtimeIntelligence, autoScroll } = basePage
+
     if (onProgress) await onProgress(28, 'Capturing rendered DOM', 'Static DOM structure successfully captured.')
     if (onProgress) await onProgress(32, 'Capturing screenshot', 'Screenshot and viewport render captured.')
     
     // Perform asset discovery scanning
     logger.info(`Executing asset discovery scan for job ${jobId}`)
     if (onProgress) await onProgress(40, 'Discovering assets', 'Scanning page references for scripts, styles, images, and fonts.')
-    const manifest = await discoverAssets({ html, networkResources, baseUrl: url, jobId })
+    
+    const combinedHtml = pages.map(p => p.html).join('\n')
+    const combinedNetworkResources = [].concat(...pages.map(p => p.networkResources || []))
+    const manifest = await discoverAssets({ html: combinedHtml, networkResources: combinedNetworkResources, baseUrl: url, jobId })
     
     // Download discovered asset files locally
     logger.info(`Executing asset downloader pipeline for job ${jobId}`)
@@ -56,25 +138,61 @@ export const createSnapshot = async ({ url, jobId, onProgress }) => {
       limits: limitsConfig
     })
 
-    // Rewrite HTML asset references
+    // Rewrite HTML asset references for each page
     logger.info(`Executing HTML path rewrite pipeline for job ${jobId}`)
     if (onProgress) await onProgress(65, 'Rewriting HTML paths', 'Translating HTML references to map to local folder locations.')
-    const { rewrittenHtml, updatedManifest: rewrittenHtmlManifest, rewriteSummary: htmlRewriteSummary } = await rewriteHtmlForJob({
-      jobId,
-      html,
-      manifest: updatedManifest,
-      pageUrl: url
-    })
+    
+    let finalManifest = updatedManifest
+    let htmlRewriteSummary = { html: { status: 'completed', rewrittenCount: 0, skippedCount: 0 } }
+    let mainRewrittenHtml = ''
+
+    for (const page of pages) {
+      const { rewrittenHtml, updatedManifest: pageRewrittenManifest, rewriteSummary } = await rewriteHtmlForJob({
+        jobId,
+        html: page.html,
+        manifest: finalManifest,
+        pageUrl: page.url,
+        baseUrl: url,
+        crawledUrlsMap
+      })
+      finalManifest = pageRewrittenManifest
+      
+      let finalHtml = rewrittenHtml
+      if (options.aiRefine !== false) {
+        logger.info(`Starting AI HTML layout refinement for page: ${page.url}`)
+        if (onProgress) {
+          await onProgress(
+            68,
+            'Refining HTML layout',
+            `AI layout correction executing for: ${new URL(page.url).pathname}`
+          )
+        }
+        finalHtml = await refineHtmlWithAI(rewrittenHtml, page.url, basePage.domAudit)
+      }
+      
+      const localFilename = urlToFilename(page.url, url)
+      const localPath = path.join(outputDir, localFilename)
+      await writeTextFile(localPath, finalHtml)
+      logger.info(`Written rewritten HTML for page ${page.url} at ${localPath}`)
+      
+      if (page.url === url) {
+        mainRewrittenHtml = finalHtml
+        htmlRewriteSummary = rewriteSummary
+      }
+    }
+
+    const rewrittenHtml = mainRewrittenHtml
 
     // Rewrite CSS asset references
     logger.info(`Executing CSS URL rewrite pipeline for job ${jobId}`)
     if (onProgress) await onProgress(72, 'Rewriting CSS URLs', 'Parsing and replacing asset URLs inside CSS files.')
-    const { updatedManifest: finalManifest, cssSummary } = await rewriteCssForJob({
+    const { updatedManifest: finalCssManifest, cssSummary } = await rewriteCssForJob({
       jobId,
-      manifest: rewrittenHtmlManifest,
+      manifest: finalManifest,
       outputDir,
       pageUrl: url
     })
+    finalManifest = finalCssManifest
 
     // Refine animation & library detection with downloaded assets manifest
     logger.info(`Finalizing library and animation detection for job ${jobId}`)
@@ -82,7 +200,7 @@ export const createSnapshot = async ({ url, jobId, onProgress }) => {
     const intelligence = await detectPageLibraries({
       html,
       manifest: finalManifest,
-      networkResources,
+      networkResources: combinedNetworkResources,
       intelligence: runtimeIntelligence
     })
 

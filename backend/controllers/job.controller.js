@@ -51,6 +51,9 @@ export const getJobsList = async (req, res, next) => {
         if (await fileExists(jobJsonPath)) {
           try {
             let job = await readJsonFile(jobJsonPath)
+            if (job.userId && job.userId !== req.user?.email) {
+              continue
+            }
             // Refresh and check stale state
             job = await checkAndMarkStale(job)
             
@@ -84,6 +87,9 @@ export const getJobsList = async (req, res, next) => {
         } else if (await fileExists(metadataPath)) {
           try {
             const metadata = await readJsonFile(metadataPath)
+            if (metadata.userId && metadata.userId !== req.user?.email) {
+              continue
+            }
             jobs.push({
               jobId: metadata.jobId,
               url: metadata.url,
@@ -162,6 +168,16 @@ export const getJobDetail = async (req, res, next) => {
         error: {
           message: 'Job not found.',
           code: 'JOB_NOT_FOUND'
+        }
+      })
+    }
+
+    if (job.userId && job.userId !== req.user?.email) {
+      return res.status(403).json({
+        success: false,
+        error: {
+          message: 'Akses ditolak. Anda bukan pemilik pekerjaan ini.',
+          code: 'FORBIDDEN'
         }
       })
     }
@@ -295,6 +311,17 @@ export const deleteJob = async (req, res, next) => {
         error: {
           message: 'Job not found.',
           code: 'JOB_NOT_FOUND'
+        }
+      })
+    }
+
+    const job = await getJob(jobId)
+    if (job && job.userId && job.userId !== req.user?.email) {
+      return res.status(403).json({
+        success: false,
+        error: {
+          message: 'Akses ditolak. Anda bukan pemilik pekerjaan ini.',
+          code: 'FORBIDDEN'
         }
       })
     }

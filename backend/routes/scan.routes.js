@@ -4,6 +4,7 @@ import { handleCodeqlContentType } from '../middleware/upload.middleware.js'
 import {
   submitLighthouseScan,
   submitCodeqlScan,
+  submitStackScan,
   getScanDetail,
   getScansList,
   cancelScan,
@@ -14,6 +15,9 @@ const router = Router()
 
 // POST /api/scans/lighthouse — Start a Lighthouse scan
 router.post('/lighthouse', validateScanUrl, submitLighthouseScan)
+
+// POST /api/scans/stack — Start a technology stack and animation scan
+router.post('/stack', validateScanUrl, submitStackScan)
 
 // POST /api/scans/codeql — Start a CodeQL scan (supports JSON and multipart/form-data)
 router.post('/codeql', handleCodeqlContentType, submitCodeqlScan)

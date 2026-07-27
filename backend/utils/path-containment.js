@@ -11,15 +11,19 @@ import path from 'path'
 export function isContainedIn(resolvedPath, allowedBase) {
   if (!resolvedPath || !allowedBase) return false
 
-  const normalizedPath = path.normalize(path.resolve(resolvedPath))
-  const normalizedBase = path.normalize(path.resolve(allowedBase))
+  // Normalize Windows backslashes to forward slashes for cross-platform matching
+  const cleanPath = resolvedPath.replace(/\\/g, '/')
+  const cleanBase = allowedBase.replace(/\\/g, '/')
 
-  // Ensure base ends with separator for accurate prefix matching
-  const baseWithSep = normalizedBase.endsWith(path.sep)
+  const normalizedPath = path.normalize(path.resolve(cleanPath))
+  const normalizedBase = path.normalize(path.resolve(cleanBase))
+
+  // Ensure base ends with a slash for accurate prefix matching
+  const baseWithSep = normalizedBase.endsWith('/') || normalizedBase.endsWith(path.sep)
     ? normalizedBase
-    : normalizedBase + path.sep
+    : normalizedBase + '/'
 
-  // Path is contained if it equals the base or starts with base + separator
+  // Path is contained if it equals the base or starts with base prefix
   return normalizedPath === normalizedBase || normalizedPath.startsWith(baseWithSep)
 }
 

@@ -44,10 +44,10 @@ export default function ResultPage() {
       <Navbar />
 
       <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
-        <Link to="/">
+        <Link to="/dashboard">
           <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white flex items-center gap-2">
             <ArrowLeft className="w-4 h-4" />
-            Back to Tool
+            Back to Dashboard
           </Button>
         </Link>
 
@@ -55,8 +55,8 @@ export default function ResultPage() {
           <div className="p-6 text-center max-w-md mx-auto bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl space-y-4">
             <h3 className="font-bold">Rebuild Job Not Found</h3>
             <p className="text-xs text-gray-400">The requested job reference '{jobId}' does not exist or has expired.</p>
-            <Link to="/">
-              <Button size="sm" variant="outline">Return Home</Button>
+            <Link to="/dashboard">
+              <Button size="sm" variant="outline">Return Dashboard</Button>
             </Link>
           </div>
         )}

@@ -52,5 +52,6 @@ export const limitsConfig = {
   AUTO_SCROLL_DELAY_MS: parseInt(process.env.AUTO_SCROLL_DELAY_MS || '250', 10),
   AUTO_SCROLL_MAX_DURATION_MS: parseInt(process.env.AUTO_SCROLL_MAX_DURATION_MS || '15000', 10),
   AUTO_SCROLL_BACK_TO_TOP: process.env.AUTO_SCROLL_BACK_TO_TOP !== 'false',
-  POST_SCROLL_WAIT_MS: parseInt(process.env.POST_SCROLL_WAIT_MS || '1000', 10)
+  POST_SCROLL_WAIT_MS: parseInt(process.env.POST_SCROLL_WAIT_MS || '1000', 10),
+  REBUILD_COOLDOWN_MS: parseInt(process.env.REBUILD_COOLDOWN_MS || '15000', 10)
 }

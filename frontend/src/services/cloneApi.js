@@ -1,5 +1,10 @@
 import { appConfig } from '../constants/appConfig'
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('casaa_token')
+  return token ? { 'Authorization': `Bearer ${token}` } : {}
+}
+
 export const cloneApi = {
   /**
    * Submits a URL to the backend /api/clone endpoint.
@@ -14,7 +19,8 @@ export const cloneApi = {
     const response = await fetch(`${appConfig.apiBaseUrl}/api/clone`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
       },
       body: JSON.stringify({ url, mode, options: otherOptions })
     })

@@ -21,7 +21,7 @@ export default function EthicalUseSection() {
   ]
 
   return (
-    <section id="ethical" className="py-20 md:py-28 border-t border-white/[0.06] bg-[#05050A] relative">
+    <section id="ethical" className="py-20 md:py-28 border-t border-white/5 bg-[#000000] relative">
       
       {/* Background glowing rings */}
       <div className="absolute top-1/2 right-1/4 w-[350px] h-[350px] purple-glow-orb opacity-35 pointer-events-none" />
@@ -40,8 +40,8 @@ export default function EthicalUseSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           
           {/* Allowed Section */}
-          <Card className="h-full border-emerald-500/10" glass={true}>
-            <CardHeader className="bg-emerald-500/5 pb-4 border-b border-emerald-500/10">
+          <Card className="h-full bg-[#0f111a]/30 border-white/5 hover:border-emerald-500/20 hover:shadow-[0_0_20px_-3px_rgba(16,185,129,0.03)] transition-all duration-300 rounded-2xl" glass={false}>
+            <CardHeader className="bg-emerald-950/25 pb-4 border-b border-emerald-500/10">
               <CardTitle className="text-xs flex items-center gap-2 text-emerald-400 uppercase tracking-wider">
                 <ShieldCheck className="w-5 h-5 text-emerald-400" />
                 Permitted Use Cases
@@ -60,8 +60,8 @@ export default function EthicalUseSection() {
           </Card>
 
           {/* Prohibited Section */}
-          <Card className="h-full border-red-500/10" glass={true}>
-            <CardHeader className="bg-red-500/5 pb-4 border-b border-red-500/10">
+          <Card className="h-full bg-[#0f111a]/30 border-white/5 hover:border-red-500/20 hover:shadow-[0_0_20px_-3px_rgba(239,68,68,0.03)] transition-all duration-300 rounded-2xl" glass={false}>
+            <CardHeader className="bg-red-950/25 pb-4 border-b border-red-500/10">
               <CardTitle className="text-xs flex items-center gap-2 text-red-400 uppercase tracking-wider">
                 <ShieldAlert className="w-5 h-5 text-red-400" />
                 Strictly Prohibited Activities

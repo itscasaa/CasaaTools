@@ -325,5 +325,45 @@ export const scanApi = {
     }
 
     return data
+  },
+
+  /**
+   * Start a concrete technology stack and animation libraries scan.
+   * @param {object} payload - { url }
+   * @returns {Promise<object>} Response JSON with detected tech stack and animations
+   */
+  async startStackScan(payload) {
+    const token = localStorage.getItem('casaa_token')
+    const authHeaders = token ? { 'Authorization': `Bearer ${token}` } : {}
+    
+    let response
+    try {
+      response = await fetch(`${appConfig.apiBaseUrl}/api/scans/stack`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          ...authHeaders
+        },
+        body: JSON.stringify(payload)
+      })
+    } catch (networkErr) {
+      throw createNetworkError(networkErr)
+    }
+
+    let data
+    try {
+      data = await response.json()
+    } catch {
+      throw new Error('Respons server tidak valid (bukan JSON).')
+    }
+
+    if (!response.ok || !data.success) {
+      const errMsg = data.error?.message || data.message || 'Gagal memulai pemindaian stack & animasi.'
+      const err = new Error(errMsg)
+      err.code = data.error?.code || data.code
+      throw err
+    }
+
+    return data
   }
 }

@@ -12,13 +12,13 @@ import { logger } from '../utils/logger.util.js'
  * @param {function} params.onProgress - Progress callback function
  * @returns {Promise<object>} The snapshot metadata
  */
-export const createSnapshotByMode = async ({ url, jobId, mode = 'offline-package', onProgress }) => {
+export const createSnapshotByMode = async ({ url, jobId, mode = 'offline-package', options = {}, onProgress }) => {
   logger.info(`Creating snapshot for job ${jobId} with mode: ${mode}`)
   
   if (mode === 'single-html') {
-    return await createSingleHtmlSnapshot({ url, jobId, onProgress })
+    return await createSingleHtmlSnapshot({ url, jobId, options, onProgress })
   } else {
     // Default to offline-package mode
-    return await createOfflinePackage({ url, jobId, onProgress })
+    return await createOfflinePackage({ url, jobId, options, onProgress })
   }
 }

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { FolderGit, Download, ExternalLink, RefreshCw, Calendar, FileArchive, Layers, Trash2, Eye } from 'lucide-react'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
@@ -52,10 +51,8 @@ export default function HistoryPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-radial-grid flex flex-col">
-      <Navbar />
-
-      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+    <>
+      <div className="space-y-6">
         
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -93,7 +90,7 @@ export default function HistoryPage() {
                 <FolderGit className="w-10 h-10 text-gray-600 mx-auto" />
                 <h3 className="text-sm font-semibold text-white">No snapshots created yet</h3>
                 <p className="text-xs text-muted">Head back to the tool page and rebuild your first site snapshot!</p>
-                <Link to="/">
+                <Link to="/dashboard">
                   <Button size="sm">Go to Rebuilder</Button>
                 </Link>
               </div>
@@ -255,9 +252,7 @@ export default function HistoryPage() {
             )}
           </CardContent>
         </Card>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </>
   )
 }

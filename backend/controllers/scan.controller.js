@@ -17,6 +17,7 @@ import { scannerConfig } from '../config/scanner.config.js'
 import { logger } from '../utils/logger.util.js'
 import { isZipFile, safeExtractZip, detectJsProject } from '../utils/zip-extractor.js'
 import { detectCodeql, createDatabase, analyzeDatabase, parseSarif } from '../services/codeql.service.js'
+import { performStackScan } from '../services/stack-scanner.service.js'
 
 /**
  * Valid CodeQL source types.
@@ -686,6 +687,32 @@ export const deleteScan = async (req, res, next) => {
         }
       })
     }
+    next(err)
+  }
+}
+
+/**
+ * POST /api/scans/stack
+ * Scans a target URL for technology stack and animation frameworks runtime globals/DOM elements.
+ */
+export const submitStackScan = async (req, res, next) => {
+  try {
+    const { url } = req.body
+    if (!url) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'URL target harus diisi.',
+          code: 'URL_REQUIRED'
+        }
+      })
+    }
+    const result = await performStackScan(url)
+    return res.status(200).json({
+      success: true,
+      data: result
+    })
+  } catch (err) {
     next(err)
   }
 }

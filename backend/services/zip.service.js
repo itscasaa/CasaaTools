@@ -1,5 +1,6 @@
 import { ZipArchive } from 'archiver'
 import path from 'path'
+import fs from 'fs-extra'
 import { getJobOutputDir } from '../utils/path.util.js'
 import { fileExists } from '../utils/file.util.js'
 import { logger } from '../utils/logger.util.js'
@@ -44,37 +45,22 @@ export const createJobZipStream = async (jobId, downloadStatus, mode = 'offline-
     logger.error(`Archiver error for job ${jobId}: ${err.message}`)
   })
 
-  // Collect files to append based on mode
+  // Dynamically collect files in the root of outputDir to append
+  const allFiles = await fs.readdir(outputDir)
   const filesToAppend = []
-
-  // Core files: mode-specific HTML file + metadata.json
-  const htmlFile = mode === 'single-html' ? 'single.html' : 'index.html'
-  const coreFiles = [htmlFile, 'metadata.json']
   
-  for (const file of coreFiles) {
+  for (const file of allFiles) {
     const filePath = path.join(outputDir, file)
-    if (await fileExists(filePath)) {
-      filesToAppend.push(file)
-    }
-  }
-
-  // Preferred files (include if available)
-  const preferredFiles = ['screenshot.png']
-  
-  // For offline-package mode, also include manifest and rewrite backups
-  if (mode === 'offline-package') {
-    preferredFiles.push('manifest.json', 'index.original.html', 'preview-screenshot.png', 'visual-diff.png')
-  }
-  
-  // For single-html mode, include README_REMOTE_ASSETS.txt
-  if (mode === 'single-html') {
-    preferredFiles.push('README_REMOTE_ASSETS.txt')
-  }
-  
-  for (const file of preferredFiles) {
-    const filePath = path.join(outputDir, file)
-    if (await fileExists(filePath)) {
-      filesToAppend.push(file)
+    const stat = await fs.stat(filePath)
+    if (stat.isFile()) {
+      const isHtml = file.endsWith('.html')
+      const isMeta = file === 'metadata.json' || file === 'manifest.json'
+      const isImage = file === 'screenshot.png' || file === 'preview-screenshot.png' || file === 'visual-diff.png'
+      const isTxt = file === 'README_REMOTE_ASSETS.txt'
+      
+      if (isHtml || isMeta || isImage || isTxt) {
+        filesToAppend.push(file)
+      }
     }
   }
 

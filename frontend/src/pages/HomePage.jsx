@@ -48,6 +48,10 @@ export default function HomePage() {
       title: 'Opening Page',
       description: 'Navigating to the target URL and waiting for the page to load.'
     },
+    'Cooldown delay': {
+      title: 'Cooldown Delay',
+      description: 'Waiting for website assets to render completely.'
+    },
     'Triggering lazy-loaded content': {
       title: 'Triggering Lazy-Loaded Content',
       description: 'Scrolling viewport gradually to trigger lazy-loaded sections.'
@@ -119,49 +123,49 @@ export default function HomePage() {
     {
       title: 'Browser-Based Rendering',
       description: 'Open pages using a real browser engine for more accurate rendered output.',
-      icon: <Chrome className="w-5 h-5 text-[#8B5CF6]" />,
+      icon: <Chrome className="w-5 h-5 text-[#2563eb]" />,
       colSpan: 'md:col-span-6'
     },
     {
       title: 'Final DOM Capture',
       description: 'Capture the page after JavaScript rendering, similar to what you see in DevTools.',
-      icon: <FileCode className="w-5 h-5 text-[#3B82F6]" />,
+      icon: <FileCode className="w-5 h-5 text-[#3b82f6]" />,
       colSpan: 'md:col-span-6'
     },
     {
       title: 'Asset Collection',
       description: 'Detect images, stylesheets, scripts, fonts, and media files used by the page.',
-      icon: <Layers className="w-5 h-5 text-[#38BDF8]" />,
+      icon: <Layers className="w-5 h-5 text-[#60a5fa]" />,
       colSpan: 'md:col-span-4'
     },
     {
       title: 'Local HTML Rebuild',
       description: 'Rewrite paths and rebuild the page into a portable local HTML snapshot.',
-      icon: <RefreshCw className="w-5 h-5 text-[#6D5DFB]" />,
+      icon: <RefreshCw className="w-5 h-5 text-[#2563eb]" />,
       colSpan: 'md:col-span-4'
     },
     {
       title: 'ZIP Export',
       description: 'Package the result into a clean downloadable archive.',
-      icon: <Archive className="w-5 h-5 text-[#8B5CF6]" />,
+      icon: <Archive className="w-5 h-5 text-[#3b82f6]" />,
       colSpan: 'md:col-span-4'
     },
     {
       title: 'Preview Mode',
       description: 'Review the generated snapshot before exporting.',
-      icon: <Eye className="w-5 h-5 text-[#3B82F6]" />,
+      icon: <Eye className="w-5 h-5 text-[#2563eb]" />,
       colSpan: 'md:col-span-6'
     },
     {
       title: 'Animation-Aware Capture',
       description: 'Designed to preserve JavaScript-based animations when assets and scripts are available.',
-      icon: <Play className="w-5 h-5 text-[#38BDF8]" />,
+      icon: <Play className="w-5 h-5 text-[#60a5fa]" />,
       colSpan: 'md:col-span-6'
     },
     {
       title: 'Visual Compare',
       description: 'Pixel-level screenshot comparison between the original live page and the rebuilt local preview. Generates a similarity score and diff overlay.',
-      icon: <Sparkles className="w-5 h-5 text-[#6D5DFB]" />,
+      icon: <Sparkles className="w-5 h-5 text-[#2563eb]" />,
       colSpan: 'col-span-12'
     }
   ]
@@ -277,7 +281,7 @@ export default function HomePage() {
                       >
                         <button
                           onClick={() => toggleFaq(idx)}
-                          className="w-full px-6 py-5 flex items-center justify-between text-left text-xs font-bold text-[#F8FAFC] hover:text-white outline-none focus-visible:text-[#6D5DFB] transition-colors duration-200"
+                          className="w-full px-6 py-5 flex items-center justify-between text-left text-xs font-bold text-[#F8FAFC] hover:text-white outline-none focus-visible:text-[#2563eb] transition-colors duration-200"
                         >
                           <span>{faq.q}</span>
                           <span className="shrink-0 ml-4 p-1 rounded-lg bg-white/5 border border-white/5 text-[#71717A]">
@@ -322,7 +326,7 @@ export default function HomePage() {
                         }}
                         variant="primary"
                         size="lg"
-                        className="rounded-full font-bold px-8 shadow-2xl shadow-[#6D5DFB]/15"
+                        className="rounded-lg font-bold px-8 shadow-2xl shadow-[#2563eb]/10"
                       >
                         Launch CasaaTools
                         <ArrowUpRight className="ml-2 w-4.5 h-4.5" />
@@ -350,7 +354,7 @@ export default function HomePage() {
               </Button>
               
               <span className="text-xs font-mono bg-white/5 border border-white/5 px-3 py-1.5 rounded-lg text-[#A1A1AA]">
-                Job ID: <span className="text-[#6D5DFB] font-bold">{job.jobId}</span>
+                Job ID: <span className="text-[#2563eb] font-bold">{job.jobId}</span>
               </span>
             </div>
 

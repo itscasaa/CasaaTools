@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: casaatools-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-casaatools_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-casaatools_password}
+      POSTGRES_DB: ${DB_NAME:-casaatools}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  casaatools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: casaatools-app
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/output:/app/backend/output
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

@@ -14,6 +14,9 @@ export default function UrlInputCard({ onSubmit = () => {}, loading = false, api
   // Rebuild settings options
   const [scrollPage, setScrollPage] = useState(false)
   const [captureAssets, setCaptureAssets] = useState(true)
+  const [crawlPages, setCrawlPages] = useState(false)
+  const [scrollVelocity, setScrollVelocity] = useState('standard')
+  const [aiRefine, setAiRefine] = useState(true)
   
   // Mode selection state (default to null, set on button click)
   const [selectedMode, setSelectedMode] = useState(null)
@@ -68,7 +71,26 @@ export default function UrlInputCard({ onSubmit = () => {}, loading = false, api
 
     submitLockedRef.current = true
     setSelectedMode(mode)
-    onSubmit(trimmedUrl, { scrollPage, captureAssets, mode })
+
+    let autoScrollStepPx = 600
+    let autoScrollDelayMs = 250
+    if (scrollVelocity === 'slow') {
+      autoScrollStepPx = 300
+      autoScrollDelayMs = 400
+    } else if (scrollVelocity === 'fast') {
+      autoScrollStepPx = 1000
+      autoScrollDelayMs = 100
+    }
+
+    onSubmit(trimmedUrl, { 
+      scrollPage, 
+      captureAssets, 
+      crawlPages,
+      aiRefine,
+      mode, 
+      autoScrollStepPx, 
+      autoScrollDelayMs 
+    })
   }
 
   return (
@@ -157,41 +179,101 @@ export default function UrlInputCard({ onSubmit = () => {}, loading = false, api
             <button
               type="button"
               onClick={() => setShowSettings(!showSettings)}
-              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors duration-200 outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/40 rounded px-1.5 py-1"
+              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors duration-200 outline-none focus-visible:ring-1 focus-visible:ring-primary/40 rounded px-1.5 py-1"
             >
               <Settings className="w-3.5 h-3.5" />
               Advanced Rebuilder Options
             </button>
 
             {showSettings && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 text-xs text-gray-300">
-                <label className="flex items-center gap-2.5 p-2.5 rounded-lg bg-black/20 hover:bg-black/30 border border-border/50 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={scrollPage}
-                    onChange={(e) => setScrollPage(e.target.checked)}
-                    disabled={loading}
-                    className="accent-[#6D5DFB] rounded border-border"
-                  />
-                  <div>
-                    <span className="font-semibold text-white block">Auto-scroll viewport</span>
-                    <span className="text-[10px] text-muted">Triggers lazy-loaded images & elements</span>
+              <div className="space-y-4 pt-3 text-xs text-gray-300">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                  <label className="flex items-center gap-2.5 p-2.5 rounded-lg bg-black/20 hover:bg-black/30 border border-border/50 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={scrollPage}
+                      onChange={(e) => setScrollPage(e.target.checked)}
+                      disabled={loading}
+                      className="accent-primary rounded border-white/10"
+                    />
+                    <div>
+                      <span className="font-semibold text-white block text-left">Auto-scroll viewport</span>
+                      <span className="text-[10px] text-muted text-left block">Triggers lazy-loaded elements</span>
+                    </div>
+                  </label>
+                  
+                  <label className="flex items-center gap-2.5 p-2.5 rounded-lg bg-black/20 hover:bg-black/30 border border-border/50 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={captureAssets}
+                      onChange={(e) => setCaptureAssets(e.target.checked)}
+                      disabled={loading}
+                      className="accent-primary rounded border-white/10"
+                    />
+                    <div>
+                      <span className="font-semibold text-white block text-left">Capture assets</span>
+                      <span className="text-[10px] text-muted text-left block">Collects CSS/JS/Images locally</span>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-2.5 p-2.5 rounded-lg bg-black/20 hover:bg-black/30 border border-border/50 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={crawlPages}
+                      onChange={(e) => setCrawlPages(e.target.checked)}
+                      disabled={loading}
+                      className="accent-primary rounded border-white/10"
+                    />
+                    <div>
+                      <span className="font-semibold text-white block text-left">Multi-page crawl</span>
+                      <span className="text-[10px] text-muted text-left block">Crawls & links subpages offline</span>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-2.5 p-2.5 rounded-lg bg-black/20 hover:bg-black/30 border border-border/50 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={aiRefine}
+                      onChange={(e) => setAiRefine(e.target.checked)}
+                      disabled={loading}
+                      className="accent-primary rounded border-white/10"
+                    />
+                    <div>
+                      <span className="font-semibold text-white block text-left">AI Layout Enhancer</span>
+                      <span className="text-[10px] text-muted text-left block">Refines layout structure via AI</span>
+                    </div>
+                  </label>
+                </div>
+
+                {scrollPage && (
+                  <div className="p-3 rounded-lg bg-black/20 border border-white/5 space-y-2 text-left">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-white">Scroll Velocity</span>
+                      <span className="text-[10px] text-muted font-mono">
+                        {scrollVelocity === 'slow' && '300px/step, 400ms delay'}
+                        {scrollVelocity === 'standard' && '600px/step, 250ms delay'}
+                        {scrollVelocity === 'fast' && '1000px/step, 100ms delay'}
+                      </span>
+                    </div>
+                    <div className="flex gap-1.5 bg-[#090a0f] p-1 rounded-lg border border-white/5 w-fit">
+                      {['slow', 'standard', 'fast'].map((vel) => (
+                        <button
+                          key={vel}
+                          type="button"
+                          disabled={loading}
+                          onClick={() => setScrollVelocity(vel)}
+                          className={`text-[10px] font-medium px-3 py-1.5 rounded-md capitalize transition-all select-none ${
+                            scrollVelocity === vel
+                              ? 'bg-[#2563eb] text-white shadow font-semibold'
+                              : 'text-neutral-400 hover:text-white'
+                          }`}
+                        >
+                          {vel}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </label>
-                
-                <label className="flex items-center gap-2.5 p-2.5 rounded-lg bg-black/20 hover:bg-black/30 border border-border/50 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={captureAssets}
-                    onChange={(e) => setCaptureAssets(e.target.checked)}
-                    disabled={loading}
-                    className="accent-[#6D5DFB] rounded border-border"
-                  />
-                  <div>
-                    <span className="font-semibold text-white block">Capture asset references</span>
-                    <span className="text-[10px] text-muted">Collects CSS/JS/Images locally</span>
-                  </div>
-                </label>
+                )}
               </div>
             )}
           </div>

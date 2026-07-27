@@ -146,12 +146,14 @@ export const getActiveJobsCount = () => {
  * @param {string} params.mode - Snapshot mode ('offline-package' or 'single-html')
  * @returns {Promise<object>} The job object
  */
-export const createJob = async ({ jobId, url, mode = 'offline-package' }) => {
+export const createJob = async ({ jobId, url, mode = 'offline-package', userId = null, options = {} }) => {
   const now = new Date().toISOString()
   const job = {
     jobId,
     url,
     mode,
+    userId,
+    options,
     status: 'queued',
     progress: 0,
     currentStep: 'Queued',
@@ -179,7 +181,7 @@ export const createJob = async ({ jobId, url, mode = 'offline-package' }) => {
   const jobJsonPath = path.join(outputDir, 'job.json')
   await writeJsonFile(jobJsonPath, job)
 
-  logger.info(`Job ${jobId} initialized and queued (mode: ${mode}).`)
+  logger.info(`Job ${jobId} initialized and queued (mode: ${mode}, user: ${userId}).`)
   return job
 }
 
@@ -360,7 +362,7 @@ export const markJobFailed = async (jobId, error) => {
  * @param {string} params.url - Target URL
  * @param {string} params.mode - Snapshot mode ('offline-package' or 'single-html')
  */
-export const runSnapshotJob = async ({ jobId, url, mode = 'offline-package' }) => {
+export const runSnapshotJob = async ({ jobId, url, mode = 'offline-package', options = {} }) => {
   try {
     await markJobRunning(jobId)
     await appendJobLog(jobId, { step: 'Starting snapshot', message: 'Starting snapshot rebuilder pipeline' })
@@ -369,6 +371,7 @@ export const runSnapshotJob = async ({ jobId, url, mode = 'offline-package' }) =
       url,
       jobId,
       mode,
+      options,
       onProgress: async (progress, currentStep, message) => {
         await updateJob(jobId, { progress, currentStep })
         await appendJobLog(jobId, { step: currentStep, message })

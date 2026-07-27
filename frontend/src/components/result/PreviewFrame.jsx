@@ -27,7 +27,7 @@ export default function PreviewFrame({ jobId, url }) {
     setLoading(false)
   }
 
-  const previewUrl = `${appConfig.apiBaseUrl}/preview/${jobId}`
+  const previewUrl = `${appConfig.apiBaseUrl}/preview/${jobId}/`
 
   return (
     <Card className="flex flex-col overflow-hidden border border-border" glass={false}>

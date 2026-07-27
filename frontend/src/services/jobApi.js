@@ -1,5 +1,10 @@
 import { appConfig } from '../constants/appConfig'
 
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('casaa_token')
+  return token ? { 'Authorization': `Bearer ${token}` } : {}
+}
+
 export const jobApi = {
   /**
    * Fetches details of a single job.
@@ -7,7 +12,11 @@ export const jobApi = {
    * @returns {Promise<object>} The job details
    */
   async getJob(jobId) {
-    const response = await fetch(`${appConfig.apiBaseUrl}/api/jobs/${jobId}`)
+    const response = await fetch(`${appConfig.apiBaseUrl}/api/jobs/${jobId}`, {
+      headers: {
+        ...getAuthHeaders()
+      }
+    })
     const data = await response.json()
     if (!response.ok || !data.success) {
       throw new Error(data.error?.message || data.message || 'Job not found')
@@ -28,7 +37,11 @@ export const jobApi = {
    * @returns {Promise<Array>} List of job summaries
    */
   async getJobs() {
-    const response = await fetch(`${appConfig.apiBaseUrl}/api/jobs`)
+    const response = await fetch(`${appConfig.apiBaseUrl}/api/jobs`, {
+      headers: {
+        ...getAuthHeaders()
+      }
+    })
     const data = await response.json()
     if (!response.ok || !data.success) {
       throw new Error(data.error?.message || data.message || 'Failed to fetch jobs')
@@ -40,28 +53,32 @@ export const jobApi = {
    * Resolves absolute screenshot URL for a job.
    */
   getScreenshotUrl(jobId) {
-    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/screenshot`
+    // Add token parameter or authorization if necessary, but serving static files via express can remain direct
+    const token = localStorage.getItem('casaa_token')
+    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/screenshot?token=${token || ''}`
   },
 
   /**
    * Resolves absolute preview screenshot URL for a job.
    */
   getPreviewScreenshotUrl(jobId) {
-    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/preview-screenshot`
+    const token = localStorage.getItem('casaa_token')
+    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/preview-screenshot?token=${token || ''}`
   },
 
   /**
    * Resolves absolute visual diff image URL for a job.
    */
   getVisualDiffUrl(jobId) {
-    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/visual-diff`
+    const token = localStorage.getItem('casaa_token')
+    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/visual-diff?token=${token || ''}`
   },
 
   /**
    * Resolves absolute preview URL for a job.
    */
   getPreviewUrl(jobId) {
-    return `${appConfig.apiBaseUrl}/preview/${jobId}`
+    return `${appConfig.apiBaseUrl}/preview/${jobId}/`
   },
 
   /**
@@ -104,14 +121,19 @@ export const jobApi = {
    * Resolves absolute manifest URL for a job.
    */
   getManifestUrl(jobId) {
-    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/manifest`
+    const token = localStorage.getItem('casaa_token')
+    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/manifest?token=${token || ''}`
   },
 
   /**
    * Fetches the manifest.json details.
    */
   async getManifest(jobId) {
-    const response = await fetch(this.getManifestUrl(jobId))
+    const response = await fetch(`${appConfig.apiBaseUrl}/api/jobs/${jobId}/manifest`, {
+      headers: {
+        ...getAuthHeaders()
+      }
+    })
     const data = await response.json()
     if (!response.ok || !data.success) {
       throw new Error(data.error?.message || data.message || 'Manifest not found')
@@ -123,7 +145,8 @@ export const jobApi = {
    * Returns the absolute ZIP download URL.
    */
   getDownloadUrl(jobId) {
-    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/download`
+    const token = localStorage.getItem('casaa_token')
+    return `${appConfig.apiBaseUrl}/api/jobs/${jobId}/download?token=${token || ''}`
   },
 
   /**
@@ -132,7 +155,10 @@ export const jobApi = {
   async deleteJob(jobId) {
     try {
       const response = await fetch(`${appConfig.apiBaseUrl}/api/jobs/${jobId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          ...getAuthHeaders()
+        }
       })
       
       // Check if fetch succeeded
